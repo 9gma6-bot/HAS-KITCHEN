@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>阿蝦廚房 🍳 | 阿蝦專屬家庭菜單規劃</title>
+  
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="theme-color" content="#FF7E5F">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Sticky Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <span class="logo-emoji">🍳</span>
+        <div class="logo-text">
+          <h1>阿蝦廚房</h1>
+          <p>阿蝦專屬家庭菜單規劃</p>
+        </div>
+      </div>
+      <div class="header-action">
+        <button id="dark-mode-toggle" class="btn-icon" aria-label="切換主題">
+          <svg class="sun-icon" viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Multi-Page Wrapper -->
+  <main class="app-content">
+
+    <!-- TAB 1: LUCKY WHEEL (今日食乜好) -->
+    <section id="tab-wheel" class="tab-pane active">
+      <div class="section-hero">
+        <h2>🎯 今日食乜好？</h2>
+        <p>擺脫選擇困難！轉動幸運輪盤，讓命運決定今晚的美食！</p>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="filter-wrapper">
+        <div class="filter-scroll">
+          <button class="filter-pill active" data-category="all">全部菜式</button>
+          <button class="filter-pill" data-category="快手菜">⚡ 快手菜</button>
+          <button class="filter-pill" data-category="家常菜">🏠 家常便飯</button>
+          <button class="filter-pill" data-category="清淡健康">🥦 清淡健康</button>
+          <button class="filter-pill" data-category="老火靚湯">🥣 老火靚湯</button>
+          <button class="filter-pill" data-category="惹味開胃">🔥 惹味開胃</button>
+        </div>
+      </div>
+
+      <!-- Wheel Container -->
+      <div class="wheel-outer-container">
+        <div class="wheel-pointer-container">
+          <div class="wheel-pointer"></div>
+        </div>
+        <div class="canvas-container">
+          <canvas id="wheel-canvas" width="340" height="340"></canvas>
+        </div>
+        <button id="spin-button" class="btn-spin">
+          <span>SPIN</span>
+          <small>點擊旋轉</small>
+        </button>
+      </div>
+
+      <!-- Selected Recipe Result iOS Card -->
+      <div id="wheel-result-card" class="result-card hidden">
+        <div class="result-badge">🎉 今日推薦</div>
+        <h3 id="result-name">番茄炒蛋</h3>
+        <div class="result-meta">
+          <span class="meta-item"><span class="icon">🔥</span><span id="result-calories">320 kcal</span></span>
+          <span class="meta-item"><span class="icon">⏱️</span><span id="result-time">15 分鐘</span></span>
+          <span class="meta-item"><span class="icon">💪</span><span id="result-difficulty">簡單</span></span>
+        </div>
+        <div class="result-actions">
+          <button id="btn-view-result" class="btn btn-primary">📖 查看食譜</button>
+          <button id="btn-add-result-plan" class="btn btn-secondary">📅 加入每週菜單</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- TAB 2: FRIDGE MATCH (雪櫃有咩) -->
+    <section id="tab-fridge" class="tab-pane">
+      <div class="section-hero">
+        <h2>🥦 雪櫃有咩煮咩？</h2>
+        <p>勾選你雪櫃現有的食材，即時為你匹配最合適的美味食譜！</p>
+      </div>
+
+      <!-- Ingredient Groups Selector -->
+      <div class="fridge-container">
+        <div class="fridge-shelf">
+          <span class="shelf-title">🥩 肉類 & 海鮮</span>
+          <div class="ingredients-grid" data-group="meat">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+        <div class="fridge-shelf">
+          <span class="shelf-title">🥬 新鮮蔬菜</span>
+          <div class="ingredients-grid" data-group="produce">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+        <div class="fridge-shelf">
+          <span class="shelf-title">🥚 豆蛋 & 其他</span>
+          <div class="ingredients-grid" data-group="other">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Matching Count Bar -->
+      <div class="matching-status-bar">
+        <div class="status-left">
+          已選食材: <span id="selected-ingredients-count" class="count-badge">0</span> 個
+        </div>
+        <button id="btn-clear-fridge" class="btn-text">清除全選</button>
+      </div>
+
+      <!-- Match Results -->
+      <div class="match-results-section">
+        <h3>🔍 推薦菜式 (<span id="matched-recipes-count">0</span>)</h3>
+        <div id="matched-recipes-list" class="recipes-list-scroll">
+          <!-- Dynamically populated recipe list -->
+          <div class="empty-state">
+            <span class="emoji">🍳</span>
+            <p>請在上方勾選食材開始配對！</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- TAB 3: PLANNER (每週菜單) -->
+    <section id="tab-planner" class="tab-pane">
+      <div class="section-hero-row">
+        <div>
+          <h2>📅 每週菜單規劃</h2>
+          <p>規劃均衡飲食，自動計算每日卡路里攝取</p>
+        </div>
+        <button id="btn-auto-plan" class="btn btn-accent btn-sm">
+          <span>🎲 智能生成</span>
+        </button>
+      </div>
+
+      <!-- Weekly Day Tabs -->
+      <div class="weekly-days-tabs">
+        <button class="day-tab active" data-day="Mon">一<small>Mon</small></button>
+        <button class="day-tab" data-day="Tue">二<small>Tue</small></button>
+        <button class="day-tab" data-day="Wed">三<small>Wed</small></button>
+        <button class="day-tab" data-day="Thu">四<small>Thu</small></button>
+        <button class="day-tab" data-day="Fri">五<small>Fri</small></button>
+        <button class="day-tab" data-day="Sat">六<small>Sat</small></button>
+        <button class="day-tab" data-day="Sun">日<small>Sun</small></button>
+      </div>
+
+      <!-- Selected Day Planner Card -->
+      <div class="day-plan-card">
+        <div class="day-plan-header">
+          <h3 id="current-day-label">星期一菜單</h3>
+          <div class="day-calorie-badge">
+            🔥 每日總量: <span id="day-total-calories" class="calorie-number">0</span> kcal
+          </div>
+        </div>
+
+        <!-- Meals list -->
+        <div class="meals-list">
+          <!-- Breakfast -->
+          <div class="meal-row" data-meal="breakfast">
+            <div class="meal-type">
+              <span class="meal-emoji">🌅</span>
+              <span class="meal-name">早餐</span>
+            </div>
+            <div class="meal-selected-dish" id="meal-breakfast-dish">
+              <span class="placeholder">尚未規劃</span>
+            </div>
+            <div class="meal-actions">
+              <button class="btn-icon btn-add-meal" data-meal="breakfast" aria-label="選擇早餐">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </button>
+              <button class="btn-icon btn-remove-meal hidden" data-meal="breakfast" aria-label="刪除早餐">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Lunch -->
+          <div class="meal-row" data-meal="lunch">
+            <div class="meal-type">
+              <span class="meal-emoji">☀️</span>
+              <span class="meal-name">午餐</span>
+            </div>
+            <div class="meal-selected-dish" id="meal-lunch-dish">
+              <span class="placeholder">尚未規劃</span>
+            </div>
+            <div class="meal-actions">
+              <button class="btn-icon btn-add-meal" data-meal="lunch" aria-label="選擇午餐">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </button>
+              <button class="btn-icon btn-remove-meal hidden" data-meal="lunch" aria-label="刪除午餐">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Dinner -->
+          <div class="meal-row" data-meal="dinner">
+            <div class="meal-type">
+              <span class="meal-emoji">🌙</span>
+              <span class="meal-name">晚餐</span>
+            </div>
+            <div class="meal-selected-dish" id="meal-dinner-dish">
+              <span class="placeholder">尚未規劃</span>
+            </div>
+            <div class="meal-actions">
+              <button class="btn-icon btn-add-meal" data-meal="dinner" aria-label="選擇晚餐">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </button>
+              <button class="btn-icon btn-remove-meal hidden" data-meal="dinner" aria-label="刪除晚餐">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weekly Analytics & Summary -->
+      <div class="weekly-stats-card">
+        <h3>📊 本週健康小貼士</h3>
+        <p id="weekly-caloric-advice">規劃每週膳食能幫您有效控制卡路里！在上方點擊「智能生成」可一鍵安排本週精選健康家常菜。</p>
+      </div>
+    </section>
+
+
+    <!-- TAB 4: GROCERY LIST (買餸清單) -->
+    <section id="tab-grocery" class="tab-pane">
+      <div class="section-hero">
+        <h2>📝 智能買餸清單</h2>
+        <p>系統已根據您的「每週菜單規劃」自動匯總出所需的買餸清單！</p>
+      </div>
+
+      <!-- List control actions -->
+      <div class="grocery-control-bar">
+        <div class="add-grocery-input-group">
+          <input type="text" id="new-grocery-item" placeholder="手動新增想買的食材..." aria-label="手動新增食材">
+          <button id="btn-add-grocery" class="btn btn-primary btn-icon-only">
+            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Grocery Lists categorized -->
+      <div class="grocery-container">
+        <!-- Dynamic grocery items lists by category -->
+        <div class="grocery-category-card" id="grocery-cat-produce">
+          <div class="category-header">🥬 蔬菜水果類</div>
+          <ul class="grocery-list" id="list-produce">
+            <!-- Dynamic list items -->
+          </ul>
+        </div>
+
+        <div class="grocery-category-card" id="grocery-cat-meat">
+          <div class="category-header">🥩 肉類海鮮類</div>
+          <ul class="grocery-list" id="list-meat">
+            <!-- Dynamic list items -->
+          </ul>
+        </div>
+
+        <div class="grocery-category-card" id="grocery-cat-other">
+          <div class="category-header">🧂 乾貨、醬料與其他</div>
+          <ul class="grocery-list" id="list-other">
+            <!-- Dynamic list items -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- Completed tasks list / clear actions -->
+      <div class="grocery-footer-actions">
+        <button id="btn-clear-completed-grocery" class="btn btn-outline btn-sm">清除已買項目</button>
+        <button id="btn-reset-grocery" class="btn btn-outline-danger btn-sm">重設整張清單</button>
+      </div>
+    </section>
+
+
+    <!-- TAB 5: RECIPE BOOK (私房菜譜) -->
+    <section id="tab-recipes" class="tab-pane">
+      <div class="section-hero-row">
+        <div>
+          <h2>📖 家庭私房菜譜</h2>
+          <p>記錄家庭專屬口味，珍藏每道溫馨的味道</p>
+        </div>
+        <button id="btn-open-add-recipe" class="btn btn-primary btn-sm">
+          <span>➕ 新增菜式</span>
+        </button>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="recipe-search-box">
+        <input type="text" id="recipe-search-input" placeholder="搜尋菜譜名稱、食材..." aria-label="搜尋菜單">
+      </div>
+
+      <!-- Recipe Grid list -->
+      <div id="recipes-gallery" class="recipes-gallery-grid">
+        <!-- Dynamically populated with beautiful recipes cards -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- iOS BOTTOM TAB BAR -->
+  <nav class="app-tabbar">
+    <button class="tab-item active" data-tab="wheel">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="2" x2="12" y2="6"></line>
+          <line x1="12" y1="18" x2="12" y2="22"></line>
+          <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+          <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+          <line x1="2" y1="12" x2="6" y2="12"></line>
+          <line x1="18" y1="12" x2="22" y2="12"></line>
+          <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
+          <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+        </svg>
+      </div>
+      <span class="tab-label">今日食乜</span>
+    </button>
+    
+    <button class="tab-item" data-tab="fridge">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <line x1="12" y1="2" x2="12" y2="12"></line>
+        </svg>
+      </div>
+      <span class="tab-label">雪櫃有咩</span>
+    </button>
+    
+    <button class="tab-item" data-tab="planner">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+      </div>
+      <span class="tab-label">每週菜單</span>
+    </button>
+    
+    <button class="tab-item" data-tab="grocery">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+      </div>
+      <span class="tab-label">買餸清單</span>
+    </button>
+    
+    <button class="tab-item" data-tab="recipes">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5V4.5z"></path>
+        </svg>
+      </div>
+      <span class="tab-label">私房菜譜</span>
+    </button>
+  </nav>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- 1. RECIPE DETAILS MODAL -->
+  <div id="modal-recipe-details" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="detail-recipe-name">菜式詳情</h3>
+        <button class="btn-close-modal" id="btn-close-details">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="recipe-detail-hero">
+          <div class="recipe-detail-visual" id="recipe-detail-visual-bg">
+            <span id="detail-recipe-emoji" class="large-emoji">🍳</span>
+          </div>
+          <div class="recipe-detail-highlights">
+            <div class="highlight-box">
+              <span class="h-label">卡路里</span>
+              <span id="detail-recipe-calories" class="h-value">350 kcal</span>
+            </div>
+            <div class="highlight-box">
+              <span class="h-label">烹飪時間</span>
+              <span id="detail-recipe-time" class="h-value">20 分鐘</span>
+            </div>
+            <div class="highlight-box">
+              <span class="h-label">難易度</span>
+              <span id="detail-recipe-difficulty" class="h-value">簡單</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="recipe-detail-section">
+          <h4>🥦 所需食材</h4>
+          <ul class="recipe-ingredients-list" id="detail-recipe-ingredients">
+            <!-- Dynamically populated -->
+          </ul>
+        </div>
+
+        <div class="recipe-detail-section">
+          <h4>👩‍🍳 烹飪步驟</h4>
+          <ol class="recipe-steps-list" id="detail-recipe-steps">
+            <!-- Dynamically populated -->
+          </ol>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-detail-add-planner" class="btn btn-primary">📅 加入每週菜單</button>
+        <button class="btn btn-secondary btn-close-modal-footer">關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. ADD TO PLANNER SELECTOR MODAL -->
+  <div id="modal-planner-selector" class="modal-backdrop hidden">
+    <div class="modal-card modal-sm">
+      <div class="modal-header">
+        <h3>📅 安排到每週菜單</h3>
+        <button class="btn-close-modal" id="btn-close-planner-selector">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="selector-tip">請選擇要將「<strong id="plan-selector-dish-name">菜式</strong>」加入到哪天和哪一餐：</p>
+        
+        <div class="form-group">
+          <label for="select-plan-day">選擇星期</label>
+          <select id="select-plan-day" class="form-control">
+            <option value="Mon">星期一</option>
+            <option value="Tue">星期二</option>
+            <option value="Wed">星期三</option>
+            <option value="Thu">星期四</option>
+            <option value="Fri">星期五</option>
+            <option value="Sat">星期六</option>
+            <option value="Sun">星期日</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="select-plan-meal">選擇餐次</label>
+          <select id="select-plan-meal" class="form-control">
+            <option value="breakfast">🌅 早餐</option>
+            <option value="lunch" selected>☀️ 午餐</option>
+            <option value="dinner">🌙 晚餐</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-confirm-add-plan" class="btn btn-primary">確定加入</button>
+        <button class="btn btn-secondary btn-close-modal-footer">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. ADD NEW RECIPE MODAL -->
+  <div id="modal-add-recipe" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>➕ 新增自訂私房菜</h3>
+        <button class="btn-close-modal" id="btn-close-add-recipe">&times;</button>
+      </div>
+      <form id="form-add-recipe">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="recipe-name">菜式名稱 <span class="required">*</span></label>
+              <input type="text" id="recipe-name" class="form-control" placeholder="例如：香煎蓮藕餅" required>
+            </div>
+            <div class="form-group">
+              <label for="recipe-emoji">代表 Emoji 🍳</label>
+              <input type="text" id="recipe-emoji" class="form-control" placeholder="例如：🍖" value="🍳">
+            </div>
+          </div>
+
+          <div class="form-grid-three">
+            <div class="form-group">
+              <label for="recipe-calories">卡路里 (kcal) <span class="required">*</span></label>
+              <input type="number" id="recipe-calories" class="form-control" placeholder="例如：420" min="1" required>
+            </div>
+            <div class="form-group">
+              <label for="recipe-time">準備時間 (分鐘) <span class="required">*</span></label>
+              <input type="number" id="recipe-time" class="form-control" placeholder="例如：25" min="1" required>
+            </div>
+            <div class="form-group">
+              <label for="recipe-difficulty">難易度</label>
+              <select id="recipe-difficulty" class="form-control">
+                <option value="簡單">簡單</option>
+                <option value="中等" selected>中等</option>
+                <option value="困難">困難</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>菜式標籤 (多選)</label>
+            <div class="checkbox-tags-group">
+              <label class="checkbox-tag-btn">
+                <input type="checkbox" name="recipe-tags" value="快手菜"> ⚡ 快手菜
+              </label>
+              <label class="checkbox-tag-btn">
+                <input type="checkbox" name="recipe-tags" value="家常菜" checked> 🏠 家常便飯
+              </label>
+              <label class="checkbox-tag-btn">
+                <input type="checkbox" name="recipe-tags" value="清淡健康"> 🥦 清淡健康
+              </label>
+              <label class="checkbox-tag-btn">
+                <input type="checkbox" name="recipe-tags" value="老火靚湯"> 🥣 老火靚湯
+              </label>
+              <label class="checkbox-tag-btn">
+                <input type="checkbox" name="recipe-tags" value="惹味開胃"> 🔥 惹味開胃
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>🥦 所需食材 (格式：名稱:份量, 類別 - 每行一個。類別可為 produce, meat, other)</label>
+            <textarea id="recipe-ingredients-input" class="form-control" rows="4" placeholder="例如：&#10;蓮藕:300g, meat&#10;免治豬肉:200g, meat&#10;蔥花:少許, produce&#10;生抽:1湯匙, other" required></textarea>
+            <small class="form-tip">類別用以將食材自動歸類到買餸清單（produce=蔬菜水果, meat=肉類海鮮, other=醬料乾貨）。</small>
+          </div>
+
+          <div class="form-group">
+            <label>👩‍🍳 烹飪步驟 (每行一個步驟)</label>
+            <textarea id="recipe-steps-input" class="form-control" rows="4" placeholder="例如：&#10;將蓮藕去皮洗淨後切成碎粒。&#10;免治豬肉加入調味料醃製15分鐘，隨後拌入蓮藕碎。&#10;將肉餡捏成餅狀。&#10;下鍋用中小火煎至兩面金黃熟透即可。" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">儲存菜譜</button>
+          <button type="button" class="btn btn-secondary btn-close-modal-footer" id="btn-cancel-add-recipe">取消</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Interactive notification toast -->
+  <div id="toast" class="toast hidden">
+    <span id="toast-message">提示訊息</span>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Register Service Worker for PWA / offline support
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
