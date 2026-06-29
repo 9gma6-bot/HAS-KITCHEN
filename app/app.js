@@ -615,7 +615,12 @@ document.addEventListener("DOMContentLoaded", () => {
 function initAppState() {
   const savedRecipes = localStorage.getItem("kitchen_recipes");
   if (savedRecipes) {
-    state.recipes = JSON.parse(savedRecipes);
+    try {
+      state.recipes = repairSavedRecipes(JSON.parse(savedRecipes));
+    } catch (error) {
+      state.recipes = [...DEFAULT_RECIPES];
+    }
+    localStorage.setItem("kitchen_recipes", JSON.stringify(state.recipes));
   } else {
     state.recipes = [...DEFAULT_RECIPES];
     localStorage.setItem("kitchen_recipes", JSON.stringify(state.recipes));
@@ -643,6 +648,35 @@ function initAppState() {
   }
   
   state.currentTheme = localStorage.getItem("kitchen_theme") || "light";
+}
+
+function repairSavedRecipes(savedRecipes) {
+  if (!Array.isArray(savedRecipes) || savedRecipes.length === 0) {
+    return [...DEFAULT_RECIPES];
+  }
+
+  const defaultById = new Map(DEFAULT_RECIPES.map(recipe => [recipe.id, recipe]));
+  const repaired = savedRecipes.map(recipe => {
+    const fallback = defaultById.get(recipe && recipe.id);
+    if (!fallback) return recipe;
+
+    return {
+      ...fallback,
+      ...recipe,
+      tags: Array.isArray(recipe.tags) && recipe.tags.length ? recipe.tags : fallback.tags,
+      ingredients: Array.isArray(recipe.ingredients) && recipe.ingredients.length ? recipe.ingredients : fallback.ingredients,
+      steps: Array.isArray(recipe.steps) && recipe.steps.length ? recipe.steps : fallback.steps
+    };
+  }).filter(recipe => recipe && recipe.name);
+
+  const existingIds = new Set(repaired.map(recipe => recipe.id));
+  DEFAULT_RECIPES.forEach(recipe => {
+    if (!existingIds.has(recipe.id)) {
+      repaired.push(recipe);
+    }
+  });
+
+  return repaired.length ? repaired : [...DEFAULT_RECIPES];
 }
 
 // ==========================================================================

@@ -1,12 +1,12 @@
-const CACHE_NAME = 'shrimp-kitchen-v1';
+const CACHE_NAME = 'shrimp-kitchen-v2';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/app.js',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './manifest.json',
+  './icons/icon-192.png',
+  './icons/icon-512.png'
 ];
 
 // Install - cache all assets
