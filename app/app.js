@@ -1507,8 +1507,10 @@ function renderRecipesGallery(searchQuery = "") {
   }
   
   filtered.forEach(r => {
-    const card = document.createElement("div");
+    const card = document.createElement("button");
+    card.type = "button";
     card.className = "recipe-card";
+    card.setAttribute("aria-label", `查看食譜：${r.name}`);
     card.innerHTML = `
       <div class="recipe-card-visual">
         <span class="recipe-card-emoji">${r.emoji}</span>

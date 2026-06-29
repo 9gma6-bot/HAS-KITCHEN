@@ -927,6 +927,7 @@ body {
 }
 
 .recipe-card {
+  width: 100%;
   background: var(--card-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -938,6 +939,10 @@ body {
   flex-direction: column;
   transition: var(--transition-elastic);
   cursor: pointer;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  padding: 0;
 }
 
 .recipe-card:active {
