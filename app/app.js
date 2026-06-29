@@ -819,6 +819,7 @@ function showToast(message, type = "success") {
 function openModal(modalId) {
   const modal = document.getElementById(modalId);
   if (modal) {
+    modal.classList.remove("hidden");
     modal.classList.add("active");
     document.body.style.overflow = "hidden";
   }
@@ -828,6 +829,7 @@ function closeModal(modalId) {
   const modal = document.getElementById(modalId);
   if (modal) {
     modal.classList.remove("active");
+    modal.classList.add("hidden");
     document.body.style.overflow = "";
   }
 }
